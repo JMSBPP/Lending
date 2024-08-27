@@ -27,4 +27,16 @@ contract PoolConfiguration {
         collateralRate = _collateralRate;
         liquidationBonusRate = _liquidationBonusRate;
     }
+    /**
+     * @dev Calculates utilization rate
+     * @param _totalBorrows All cummulated borrows in the pool
+     * @param _totalLiquidity All available liquidity sittting in the pool and not borrowed
+     */
+    function getUtilizationRate(
+        uint256 _totalBorrows,
+        uint256 _totalLiquidity
+    ) public pure returns (uint256) {
+        return
+            _totalLiquidity == 0 ? 0 : (_totalBorrows * 1e18) / _totalLiquidity;
+    }
 }
