@@ -28,15 +28,37 @@ contract PoolConfiguration {
         liquidationBonusRate = _liquidationBonusRate;
     }
     /**
-     * @dev Calculates utilization rate
-     * @param _totalBorrows All cummulated borrows in the pool
-     * @param _totalLiquidity All available liquidity sittting in the pool and not borrowed
+     * @dev Calculates the utilization rate given the totalBorrows and totalLiquidity
+     * @param totalBorrows All borrowws in a given token pool
+     * @param totalLiquidity Cummulated liquidity in a given token pool
      */
     function getUtilizationRate(
-        uint256 _totalBorrows,
-        uint256 _totalLiquidity
-    ) public pure returns (uint256) {
-        return
-            _totalLiquidity == 0 ? 0 : (_totalBorrows * 1e18) / _totalLiquidity;
+        uint totalBorrows,
+        uint totalLiquidity
+    ) public pure returns (uint) {
+        return totalLiquidity == 0 ? 0 : (totalBorrows * 1e18) / totalLiquidity;
+    }
+
+    /**
+     * @dev Calculates the borrow interest rate according to the AAVE interest model
+     * @param totalBorrows All borrowws in a given token pool
+     * @param totalLiquidity Cummulated liquidity in a given token pool
+     */
+    function calculateBorrowInterestRate(
+        uint totalBorrows,
+        uint totalLiquidity
+    ) public view returns (uint) {
+        uint utilizationRate = getUtilizationRate(totalBorrows, totalLiquidity);
+        if (utilizationRate > optimalUtilizationRate) {
+            return
+                baseBorrowRate +
+                optimalSpan +
+                ((excessSpan * (utilizationRate - optimalUtilizationRate)) /
+                    (1e18 - optimalUtilizationRate));
+        } else
+            return
+                baseBorrowRate +
+                optimalSpan *
+                (utilizationRate / optimalUtilizationRate);
     }
 }
