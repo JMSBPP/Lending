@@ -2,7 +2,7 @@ pragma solidity ^0.8.0;
 
 import {ERC20} from "../dependencies/dependencies/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {IAssetPool} from "./interfaces/IAssetPool.sol";
-import {AssetPoolShare} from "./AssetPool.sol";
+import {AssetPoolShare} from "./AssetPoolShare.sol";
 
 contract AssetPoolDeployer {
     function createAssetPoolShare(
